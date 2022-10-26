@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from Models import create_tables, Publisher, Book, Stock, Shop, Sale
 import json
 
-DSN = "postgresql://postgres:postgres@localhost:5432/shop_db"
+DSN = "postgresql://postgres:Luiza2704@localhost:5432/shop_db"
 engine = sqlalchemy.create_engine(DSN)
 create_tables(engine)
 
@@ -24,6 +24,13 @@ for record in data:
     session.add(model(id=record.get('pk'), **record.get('fields')))
 
 session.commit()
+
+shop_publisher = session.query(Shop).join(Stock, Stock.id_shop == Shop.id).join(
+    Book, Book.id == Stock.id_book).join(
+    Publisher, Publisher.id == Book.id_publisher).filter(Publisher.id == 1)
+'''Cоставление запроса выборки магазинов, продающих целевого издателя'''
+for s in shop_publisher.all():
+    print(s.id, s.name)
 
 
 publisher_input = input("Введите имя или идентификатор издателя: ")
